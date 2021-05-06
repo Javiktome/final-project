@@ -34,7 +34,7 @@ import getAllMedia from '../hooks/ApiHook';
 const responsive = {
   desktop: {
     breakpoint: { max: 3000, min: 1024 },
-    items: 6,
+    items: 3,
     paritialVisibilityGutter: 60,
     slidesToSlide: 3, // optional, default to 1.
   },
