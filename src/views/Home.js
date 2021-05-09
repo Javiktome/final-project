@@ -7,6 +7,8 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
+import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 // import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -23,6 +25,7 @@ import { useHistory } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
+import Snackbar from '@material-ui/core/Snackbar';
 // import SearchIcon from '@material-ui/icons/Search';
 // import MoreIcon from '@material-ui/icons/MoreVert';
 //-----------------------------------------
@@ -30,6 +33,7 @@ import CameraImg from '../assets/camera.png';
 // import GirlCamera from '../assets/cameragirl.png';
 import CustomAppBar from '../components/CustomAppbar';
 import getAllMedia from '../hooks/ApiHook';
+import { UserContext } from '../contexts/UserContext';
 
 const responsive = {
   desktop: {
@@ -98,6 +102,7 @@ const useStyles = makeStyles((theme) => ({
   },
   gridPadding: {
     padding: '5px !important',
+    cursor: 'pointer',
   },
   link: {
     fontSize: '12px',
@@ -136,7 +141,7 @@ const useStyles = makeStyles((theme) => ({
   },
   imgRecommend: {
     width: '350px',
-    height: '200px',
+    // height: '200px',
     borderRadius: '8px',
     overflow: 'hidden',
     '& > img': {
@@ -147,7 +152,7 @@ const useStyles = makeStyles((theme) => ({
   },
   imgRecommend2: {
     width: '350px',
-    height: '200px',
+    // height: '200px',
     overflow: 'hidden',
     '& > img': {
       width: '300px',
@@ -159,8 +164,11 @@ const useStyles = makeStyles((theme) => ({
 export default function Home() {
   const classes = useStyles();
   const [value, setValue] = React.useState('home');
+  const [user] = React.useContext(UserContext);
   const [allMedia, setAllMedia] = React.useState(null);
   const router = useHistory();
+  const [open, setOpen] = React.useState(false);
+  const [message, setMessage] = React.useState('');
   const [allMediaCopy, setAllMediaCopy] = useState([]);
   const [inputVal, setInputVal] = useState(null);
   const urlMedia = 'http://media-new.mw.metropolia.fi/wbma/uploads/';
@@ -185,6 +193,16 @@ export default function Home() {
   return (
     <div className={classes.root}>
       <CssBaseline />
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        open={open}
+        autoHideDuration={3000}
+        onClose={() => setOpen(false)}
+        message={message}
+      />
       <Paper className={classes.paper}>
         <Paper className={classes.bluePaper} elevation={3}>
           <Typography
@@ -225,7 +243,14 @@ export default function Home() {
         >
           <Grid container style={{ justifyContent: 'center' }} spacing={3}>
             <Grid item xs={3} className={classes.gridPadding}>
-              <Paper className={classes.imageText} elevation={0}>
+              <Paper
+                className={classes.imageText}
+                onClick={() => {
+                  setOpen(true);
+                  setMessage('You Liked it! 👍👍');
+                }}
+                elevation={0}
+              >
                 <Avatar src={CameraImg} variant="square" />
                 <Typography
                   style={{
@@ -242,7 +267,14 @@ export default function Home() {
               </Paper>
             </Grid>
             <Grid item xs={3} className={classes.gridPadding}>
-              <Paper className={classes.imageText} elevation={0}>
+              <Paper
+                className={classes.imageText}
+                onClick={() => {
+                  setOpen(true);
+                  setMessage('You Loved it! 💛💙');
+                }}
+                elevation={0}
+              >
                 <Avatar src={CameraImg} variant="square" />
                 <Typography
                   style={{
@@ -259,7 +291,15 @@ export default function Home() {
               </Paper>
             </Grid>
             <Grid item xs={3} className={classes.gridPadding}>
-              <Paper className={classes.imageText} elevation={0}>
+              <Paper
+                className={classes.imageText}
+                elevation={0}
+                onClick={() => {
+                  // if (user && user.email && Object.keys(user).length > 0) {
+                  router.push('/category/popular');
+                  // }
+                }}
+              >
                 <Avatar src={CameraImg} variant="square" />
                 <Typography
                   style={{
@@ -276,7 +316,18 @@ export default function Home() {
               </Paper>
             </Grid>
             <Grid item xs={3} className={classes.gridPadding}>
-              <Paper className={classes.imageText} elevation={0}>
+              <Paper
+                className={classes.imageText}
+                elevation={0}
+                onClick={() => {
+                  if (user && user.email && Object.keys(user).length > 0) {
+                    router.push('/category/profile');
+                  } else {
+                    setOpen(true);
+                    setMessage('Login first!');
+                  }
+                }}
+              >
                 <Avatar src={CameraImg} variant="square" />
                 <Typography
                   style={{
@@ -318,6 +369,7 @@ export default function Home() {
                   && allMediaCopy.map((am, ind) => (
                     <div key={ind} className={classes.imgRecommend}>
                       <img src={urlMedia + am.filename} alt={am.title} />
+                      <LikeDisLike />
                     </div>
                   ))}
               </Carousel>
@@ -371,6 +423,7 @@ export default function Home() {
                       && [...allMedia.slice(0, 10)].map((am, ind) => (
                         <div key={ind} className={classes.imgRecommend}>
                           <img src={urlMedia + am.filename} alt={am.title} />
+                          <LikeDisLike />
                         </div>
                       ))}
                   </Carousel>
@@ -428,6 +481,7 @@ export default function Home() {
                       && [...allMedia.slice(10, 20)].map((am, ind) => (
                         <div key={ind} className={classes.imgRecommend}>
                           <img src={urlMedia + am.filename} alt={am.title} />
+                          <LikeDisLike />
                         </div>
                       ))}
                   </Carousel>
@@ -481,6 +535,7 @@ export default function Home() {
                         && [...allMedia.slice(20, 30)].map((am, ind) => (
                           <div key={ind} className={classes.imgRecommend2}>
                             <img src={urlMedia + am.filename} alt={am.title} />
+                            <LikeDisLike />
                           </div>
                         ))}
                     </Carousel>
@@ -495,3 +550,17 @@ export default function Home() {
     </div>
   );
 }
+
+const LikeDisLike = () => {
+  const [like, dislike] = useState(false);
+  const [love, setLove] = useState(false);
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'space-between', margin: '10px 0', cursor: 'pointer',
+    }}
+    >
+      <ThumbUpAltIcon onClick={() => dislike(!like)} htmlColor={`${!like ? 'lightgrey' : '#2e8ef1'}`} />
+      <FavoriteIcon onClick={() => setLove(!love)} htmlColor={`${!love ? 'lightgrey' : 'red'}`} />
+    </div>
+  );
+};

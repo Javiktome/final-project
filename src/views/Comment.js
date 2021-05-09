@@ -88,6 +88,8 @@ export default function Comment() {
   const [value, setValue] = useState('comment');
   const [comment, setComment] = useState(null);
   const [commentRes, setCommentRes] = useState(null);
+  const [like, dislike] = useState(false);
+  const [love, setLove] = useState(false);
   const file = useSingleUserByFile(file_id, commentRes);
   console.log('file', file_id, file, comment, commentRes);
 
@@ -125,7 +127,10 @@ export default function Comment() {
       </div>
       <div className={classes.optionContainer}>
         <span className={classes.options}>
-          <ThumbUpAltIcon />
+          <ThumbUpAltIcon
+            onClick={() => dislike(!like)}
+            style={{ color: !like ? 'lightgrey' : '#2e8ef1' }}
+          />
           <Typography variant="caption">
             {' '}
             {file && file?.ratings?.length}
@@ -146,7 +151,10 @@ export default function Comment() {
           </Typography>
         </span>
         <span className={classes.options}>
-          <FavoriteIcon />
+          <FavoriteIcon
+            onClick={() => setLove(!love)}
+            style={{ color: !love ? 'lightgrey' : 'red' }}
+          />
           <Typography variant="caption">
             {' '}
             {file && file?.favourites?.length}
@@ -171,7 +179,13 @@ export default function Comment() {
             <CommentComp key={com.comment_id} comment={com} />
           ))}
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <TextField
           value={comment}
           id="outlined-basic"

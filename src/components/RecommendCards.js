@@ -79,6 +79,8 @@ const useStyles = makeStyles((theme) => ({
 function RecommendCards({ data }) {
   const classes = useStyles();
   const router = useHistory();
+  const [like, dislike] = React.useState(false);
+  const [love, setLove] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const urlMedia = 'http://media-new.mw.metropolia.fi/wbma/uploads/';
   const [user] = React.useContext(UserContext);
@@ -159,7 +161,10 @@ function RecommendCards({ data }) {
               <Grid item>
                 <div style={{ display: 'flex', marginTop: '6px' }}>
                   <span className={classes.options}>
-                    <ThumbUpAltIcon />
+                    <ThumbUpAltIcon
+                      onClick={() => dislike(!like)}
+                      style={{ color: !like ? 'lightgrey' : '#2e8ef1' }}
+                    />
                     <Typography variant="caption"> 990</Typography>
                   </span>
                   <span className={classes.options}>
@@ -171,7 +176,10 @@ function RecommendCards({ data }) {
                     <Typography variant="caption"> 990</Typography>
                   </span>
                   <span className={classes.options}>
-                    <FavoriteIcon />
+                    <FavoriteIcon
+                      style={{ color: !love ? 'lightgrey' : 'red' }}
+                      onClick={() => setLove(!love)}
+                    />
                     <Typography variant="caption"> 8k</Typography>
                   </span>
                   <span className={classes.options}>
